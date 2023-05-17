@@ -1,0 +1,31 @@
+#docker-compose version
+version: "3"
+
+services:
+  jenkins:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    # image: jenkins/jenkins:lts-jdk11
+    container_name: jenkins-server
+    networks:
+      - infra_network
+    volumes:
+      - ./volume/certs:/certs/client
+      - ./volume/data:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    ports:
+      - "8088:8080"
+      - "5000:5000"
+    restart: on-failure
+    environment:
+      - DOCKER_TLS_CERTDIR=/certs
+      - TZ=Asia/Seoul
+
+
+networks:
+  infra_network:
+    driver: bridge
+    external: true
+    internal: true
+
